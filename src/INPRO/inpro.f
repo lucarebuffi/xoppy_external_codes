@@ -37,8 +37,8 @@ C
 	COMPLEX*16 ZS,ZP
 	COMPLEX*16 psi0,psih,psihb
 	COMPLEX*16 IZ
-	Character filena*1024
-	Character*1024 datadir
+	Character*10240 filena
+	Character*10240 datadir
 C
 C
 C
