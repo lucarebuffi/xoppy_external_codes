@@ -1,0 +1,33 @@
+
+;Magnet parameters
+PERIOD=3.3      NPER = 75       NPTS=40      
+
+;Photon energy
+EMIN=7000.	EMAX = 10000.	NE=201
+
+;Storage ring
+ENERGY=7.0	CURRENT=0.1     
+SIGX=0.3420	SIGY=0.0910
+SIGX1=0.0240	SIGY1=0.0090 
+
+;Pinhole (mm or mrad)
+DISTANCE = 0.
+XPC=0.000       XPS=0.000       NXP=0  
+YPC=0.000       YPS=0.000       NYP=0
+
+;Calculation parameters
+MODE=1		NSIG=2		TRAJECTORY=new
+XSYM=yes	HANNING=0
+
+;Filenames
+BFILE = "test.bf"
+TFILE = "test.trj"
+;BASENAME = "/tmp/yaup"
+;GNUPLOT = ylines
+
+END
+
+;Advanced keywords
+STATUS=old		UPDATE=0          RESOLUTION=0
+NCRIT=0          	MFFT=0            BW=0.0
+

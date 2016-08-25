@@ -1,0 +1,117 @@
+#!/bin/sh
+# Script to compile the Program: xpowder_fml
+#
+
+#
+# Compiler Name
+#
+COMP="g95"
+
+DEBUG=nodeb
+if [ $# -eq 2 ]
+then
+   DEBUG=$2
+fi
+#
+# Compilation Options
+#
+if [ $DEBUG = "deb" ]
+then
+   case $COMP
+   in
+      'af95')
+          OPT1="-c -g -O0"
+            ;;
+      'g95')
+          OPT1="-c -g"
+            ;;
+      'gfortran')
+          OPT1="-c -g"
+            ;;
+      'ifort')
+          OPT1="-c -g"
+            ;;
+      'lf95')
+          OPT1="-c -g"
+             ;;
+   esac
+else
+   case $COMP
+   in
+      'af95')
+          OPT1="-c -O2 -N11"
+            ;;
+      'g95')
+          OPT1="-c -O"
+            ;;
+      'gfortran')
+          OPT1="-c -O"
+            ;;
+      'ifort')
+          OPT1="-c -O -w -vec-report0"
+            ;;
+      'lf95')
+          OPT1="-c -O --nchk --tpp"
+             ;;
+   esac
+fi
+#
+# External Libraries Options
+#
+case $COMP
+in
+   'af95')
+      INC="-I../../Absoft/LibC"
+      LIB="-L../../Absoft/LibC"
+      LIBSTATIC="-lcrysfml"
+      LIBDYNAMIC="-lcrysfml"
+     ;;
+   'g95')
+      INC="-I../../crysFML/G95/LibC"
+      LIB="-L../../crysFML/G95/LibC"
+      LIBSTATIC="-lcrysfml"
+      LIBDYNAMIC="-lcrysfml"
+     ;;
+   'gfortran')
+      INC="-I../../GFortran/LibC"
+      LIB="-L../../GFortran/LibC"
+      LIBSTATIC="-lcrysfml"
+      LIBDYNAMIC="-lcrysfml"
+     ;;
+   'ifort')
+      INC="-I../../Intel/LibC"
+      LIB="-L../../Intel/LibC"
+      LIBDYNAMIC="-lcrysfml"
+      LIBSTATIC="-lcrysfml"
+     ;;
+   'lf95')
+      INC="--mod .:../../Lahey/LibC"
+      LIB="-L../../Lahey/LibC"
+      LIBDYNAMIC="-lcrysfml"
+      LIBSTATIC="-lcrysfml -lpthread"
+     ;;
+esac
+#
+# Compilation Process
+#
+$COMP $OPT1 xpowder_fml.f90    $INC
+case $COMP
+in
+  'af95')
+     $COMP *.o  -o xpowder_fml -static $LIB $LIBSTATIC
+     ;;
+  'g95')
+     $COMP *.o  -o xpowder_fml -static $LIB $LIBSTATIC
+     ;;
+  'gfortran')
+     $COMP *.o  -o xpowder_fml -static $LIB $LIBSTATIC
+     ;;
+  'ifort')
+     $COMP *.o -o xpowder_fml -static-intel $LIB $LIBSTATIC
+     ;;
+  'lf95')
+     $COMP *.o --out xpowder_fml --staticlink $LIB $LIBDYNAMIC
+     ;;
+esac
+rm -rf *.o *.mod
+echo "compilation ended. DO not forget to install it!"

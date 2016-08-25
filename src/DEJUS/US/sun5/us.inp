@@ -1,0 +1,10 @@
+APS: DLSR H7BA 60 pm, Nb=48, coupling 100%, LS-337, M. Borland, 10/01/2013
+    6.00  200.00  0.00100                      Ring-Energy Current Beam-Energy-Spread
+  0.0074  0.0109  0.0057  0.0038               Sx Sy Sxp Syp
+    2.70      86   0.000   2.282               Period N Kx Ky
+    1000.0   50000.0   10000                   Emin Emax Ne
+  30.000   0.000   0.000   1.000   1.000    10    10   D Xpc Ypc Xps Yps Nxp Nyp
+       2       4       0                       Mode Method Iharm
+       0       0     0.0       0     0.0     0 Nphi Nalpha Calpha2 Nomega Comega Nsigma
+background
+    2.70      86   0.000   2.282               Period N Kx Ky

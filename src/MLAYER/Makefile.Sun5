@@ -1,0 +1,34 @@
+# --------------------------------------------------------------
+#
+# Works automatically for Sun,hp and Linux systems
+#
+# Usage:
+#	gmake            [to create the executable crystal_ml]
+#	gmake install	 [to install  it in the correct directory]
+#	gmake clean	 [to clean the source directory]
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+#********** PLATFORM DEPENDENT VARIABLES *********************
+#
+# libraries for sun5 (expgj) 
+#
+FC = g77
+FFLAGS =  
+#**********************************************************************
+
+
+all: mlayer 
+
+mlayer:  mlayer.F
+	$(FC) $(FFLAGS) -o mlayer mlayer.F \
+	io_shadow.f iyes.f vector.f READLIB.F iblank.f
+
+clean: 
+	/bin/rm -f *.trace *.o mlayer 
+
+install:
+	cp mlayer ./../../bin.sun5/mlayer

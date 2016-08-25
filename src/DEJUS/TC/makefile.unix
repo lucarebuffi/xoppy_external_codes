@@ -1,0 +1,137 @@
+# --------------------------------------------------------------
+#
+#	gmake		[make default target]
+#	gmake install	[install target in the XOP bin directory]
+#	gmake clean	[clean the target directory]
+#	RJD, ANL, November 2, 2013
+#
+#	Updated for Fortran 90 routines and updated compiler flags.
+#	RJD, ANL, November 25, 2014
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := $(shell ../../xop_uname)
+
+#CPP = cpp
+#vpath %.f ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for sun5 
+#
+ifeq ($(ARCH),sun5)
+FC = gfortran
+FFLAGS = -O -m64 -ffixed-line-length-none
+FFLAGSD = -DDEBUG1 -g -m64 -ffixed-line-length-none -fbounds-check
+INCLUDES = -I$(ARCH) -J$(ARCH)
+LDFLAGS = -static-libgfortran -static-libgcc
+
+#FC = f77
+#FFLAGS = -O -m64 -f77=tab
+#FFLAGSD = -DDEBUG1 -g -m64 -f77=tab
+#LDFLAGS = -Bstatic
+##LDFLAGS = -lV77
+endif
+#
+# flags for linux 
+#
+ifeq ($(ARCH),linux)
+FC = gfortran
+FFLAGS = -O -m64 -ffixed-line-length-none
+FFLAGSD = -DDEBUG1 -g -m64 -ffixed-line-length-none -fbounds-check
+#FFLAGS = -O -m32 $(param1)
+INCLUDES = -I$(ARCH) -J$(ARCH)
+#LDFLAGS = -static-libgfortran -static-libgcc
+LDFLAGS = -static
+
+#FC = ifort
+#FFLAGS = -O -m64 -implicitnone -extend-source 132 -heap-arrays
+#FFLAGSD = -DDEBUG1 -g -m64 -extend-source 132 -heap-arrays -traceback -check all
+#INCLUDES = -I$(ARCH) -module $(ARCH)
+##LDFLAGS = -heap-arrays -static -nothreads
+#LDFLAGS = -heap-arrays -static-libgcc
+endif
+#
+# flags for sgi (lindsga) 
+#
+ifeq ($(ARCH),irix)
+FC = f77
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+#LDFLAGS =
+endif
+#
+# flags for darwin
+#
+ifeq ($(ARCH),darwin)
+FC = gfortran
+FFLAGS = -O -m64 -ffixed-line-length-none
+FFLAGSD = -DDEBUG1 -g -m64 -ffixed-line-length-none -fbounds-check
+INCLUDES = -I$(ARCH) -J$(ARCH)
+#LDFLAGS = -static # not supported on Mac OS X
+LDFLAGS = -static-libgfortran -static-libgcc
+endif
+#**************************************************************
+# Sources and Targets
+src = tc.f brighte.f hunt.f usb.f
+targets = tc
+targetd = tcd
+
+targets := $(ARCH)/$(targets)
+targetd := $(ARCH)/$(targetd)
+objects = $(patsubst %.f,$(ARCH)/%.o,$(src)) 
+objectd = $(patsubst %.f,$(ARCH)/%.do,$(src)) 
+
+# Rules
+.PHONY: tc tcd
+#all: tc tcd
+
+tc: | $(targets)
+tcd: | $(targetd)
+#**************************************************************
+
+$(targets): $(objects)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+#	/bin/mv *.mod $(ARCH)
+
+$(targetd): $(objectd)
+#	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+# Need to change order link order so that source files and symbol tables are found when using the Intel compiler (works also for GFORTRAN)
+	$(FC) $(FFLAGSD) $(filter $(targets).do,$^) $(filter-out $(targets).do, $^) -o $@ $(LDFLAGS)
+#	/bin/mv *.mod $(ARCH)
+
+# Pattern Rules
+$(ARCH)/%.o : %.f
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.f90
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.F
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f90
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(objects): | $(ARCH)
+$(objectd): | $(ARCH)
+
+$(ARCH):
+	@mkdir -p $@
+
+# Installation in XOP bin directory
+install:
+	/bin/cp -pi $(targets) ../../../bin.$(targets)
+
+#  Clean up
+clean:
+	$(RM) $(targets) $(targetd) $(objects) $(objectd) core *~ *.trace *.mod $(ARCH)/*.mod

@@ -1,0 +1,27 @@
+Last modification date of this file: Thu Nov 21 16:15:43 CST 2013
+Roger J. Dejus (dejus@aps.anl.gov
+
+Issues:
+Gfortran compiler warnings that actual argument contains too few elements for subroutines SPEC (line 49)
+and BLIN (line 311).
+
+Executables provided for 64-bit architectures only using static linking for
+supported platforms.
+Linux:       Red Hat Enterprise Linux Workstation release 6.3 (Santiago)
+
+Sun Solaris: Oracle Solaris 10 9/10 s10s_u9wos_14a SPARC
+             SunOS frigg 5.10 Generic_147440-27 sun4u sparc
+             SUNW,Sun-Blade-2500
+
+Mac OS X:    Snow Leopard, v10.6.8, Darwin Kernel Version 10.8.0
+
+Windows 7:   Enterprise, Service Pack 1
+---
+
+srio@esrf.eu recreates XCOM for xop from xop3.2 vrsion available 
+from: http://physics.nist.gov/PhysRefData/Xcom/Text/XCOM.html
+
+XCOM.tar.gz:  Downloaded code from NIST
+
+2009-12-03 srio@esrf.eu + sole@esrf.eu 
+xcom.f : changed MLIM from 200 to 1000

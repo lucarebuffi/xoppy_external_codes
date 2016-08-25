@@ -1,0 +1,90 @@
+# --------------------------------------------------------------
+#
+#	gmake -f makefile.win all
+#	gmake -f makefile.win install	 [install target in the XOP bin directory]
+#	gmake -f makefile.win clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := x86
+
+#CPP = cpp
+#vpath %.f ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for windows 64-bit targets
+#
+FC = gfortran
+FFLAGS = -O -m64 -cpp
+FFLAGSD = -DDEBUG1 -g -m64 -cpp
+LDFLAGS = -static-libgfortran -static-libgcc
+#
+#**************************************************************
+# Sources and Targets
+#src = mlayer.F io_shadow.f iyes.f vector.f iblank.f
+
+src1 = mlayer.F
+target1s = mlayer.exe
+target1d = mlayerd.exe
+target1s := $(ARCH)/$(target1s)
+target1d := $(ARCH)/$(target1d)
+object1s = $(patsubst %.F,$(ARCH)/%.o,$(src1)) 
+object1d = $(patsubst %.F,$(ARCH)/%.do,$(src1)) 
+
+src2 = io_shadow.f iyes.f vector.f iblank.f
+object2s = $(patsubst %.f,$(ARCH)/%.o,$(src2)) 
+object2d = $(patsubst %.f,$(ARCH)/%.do,$(src2)) 
+
+# Rules
+.PHONY: all alld mlayer
+
+mlayer: | $(target1s)
+mlayerd: | $(target1d)
+
+all:  | $(target1s)
+alld: | $(target1d)
+#**************************************************************
+
+$(target1s): $(object1s) $(object2s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(target1d): $(object1d) $(object2d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+# Pattern Rules
+$(ARCH)/%.o : %.f
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.F
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.F
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(object1s) : | $(ARCH)
+$(object1d) : | $(ARCH)
+
+$(ARCH):
+#gnuWin32 mkdir does not recoginize options (bug)
+#	@mkdir -p $@
+	@mkdir $@
+
+# Installation in XOP bin directory
+install:
+	cp -pi $(target1s) ../../bin.$(target1s)
+
+#  Clean up
+clean:
+	$(RM) $(target1s) $(target1d) $(object1s) $(object1d)
+	$(RM) $(object2s) $(object2d)
+	$(RM) core *~ *.trace

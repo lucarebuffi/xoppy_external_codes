@@ -1,0 +1,8 @@
+all: genspec1.o test1.o
+	gcc -o tasmip.exe  genspec1.o test1.o -lm
+.c.o:
+	gcc -c $<
+install:
+	copy tasmip.exe ..\..\bin.x86\tasmip.exe
+clean:
+	del  *.o tasmip.exe tasmip_tmp.dat

@@ -1,0 +1,127 @@
+# --------------------------------------------------------------
+#
+#	gmake all
+#	gmake install	 [install target in the XOP bin directory]
+#	gmake clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := $(shell ../xop_uname)
+
+#CPP = cpp
+#vpath %.c ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for sun5 
+#
+ifeq ($(ARCH),sun5)
+#CC = gcc
+#CFLAGS = -O -m64
+#LDFLAGS = -static-libgcc -lm
+
+CC = cc
+CFLAGS = -O -m64
+CFLAGSD = -DDEBUG1 -g -m64
+#LDFLAGS = -lmopt -xlibmopt
+#LDFLAGS = -Bstatic -lm # libm is not available as static library
+LDFLAGS = -Bdynamic -lm
+endif
+#
+# flags for linux 
+#
+ifeq ($(ARCH),linux)
+#CC = gcc
+#CFLAGS = -O -m64
+##CFLAGS = -O -m64 -fno-automatic # may be used to save local variables
+#CFLAGSD = -DDEBUG1 -g -m64
+##CFLAGSD = -DDEBUG1 -gdwarf-2 -m64
+##CFLAGSD = -DDEBUG1 -O1 -g -m64 -Wall
+##CFLAGS = -O -m32 $(param1)
+#LDFLAGS = -static-libgcc -lm
+
+CC = icc
+CFLAGS = -O -m64
+#CFLAGS = -O -m64 -list #-warn declarations
+CFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgcc -lm
+#LDFLAGS =
+endif
+#
+# flags for sgi (lindsga) 
+#
+ifeq ($(ARCH),irix)
+CC = cc
+CFLAGS = -O -m64
+CFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -lm
+endif
+#
+# flags for darwin
+#
+ifeq ($(ARCH),darwin)
+CC = gcc
+CFLAGS = -O -m64
+CFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgcc -lm
+endif
+#**************************************************************
+# Sources and Targets
+src = genspec1.c test1.c
+
+targets = genspec1
+targets_new = tasmip
+targetd = genspec1d
+targetd_new = tasmipd
+targets := $(ARCH)/$(targets)
+targetd := $(ARCH)/$(targetd)
+targets_new := $(ARCH)/$(targets_new)
+targetd_new := $(ARCH)/$(targetd_new)
+objects = $(patsubst %.c,$(ARCH)/%.o,$(src)) 
+objectd = $(patsubst %.c,$(ARCH)/%.do,$(src)) 
+
+# Rules
+.PHONY: all alld genspec1
+
+genspec1: | $(targets)
+genspec1d: | $(targetd)
+
+all:  | $(targets)
+alld: | $(targetd)
+#**************************************************************
+
+$(targets): $(objects)
+#	@echo $^ 
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	/bin/mv $@  $(targets_new)
+
+$(targetd): $(objectd)
+	$(CC) $(CFLAGSD) $^ -o $@ $(LDFLAGS)
+	/bin/mv $@  $(targetd_new)
+
+# Pattern Rules
+$(ARCH)/%.o : %.c
+#	@echo $< 
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.c
+	$(CC) -c $(CFLAGSD) $(INCLUDES) $< -o $@
+
+$(objects) : | $(ARCH)
+$(objectd) : | $(ARCH)
+
+$(ARCH):
+	@mkdir -p $@
+
+# Installation in XOP bin directory
+install:
+	/bin/cp -pi $(targets_new) ../../bin.$(targets_new)
+
+#  Clean up
+clean:
+	$(RM) $(targets) $(targetd) $(objects) $(objectd) $(targets_new) $(targetd_new)
+	$(RM) core *~ *.trace

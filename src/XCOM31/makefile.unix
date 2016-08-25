@@ -1,0 +1,127 @@
+# --------------------------------------------------------------
+#
+#	gmake all
+#	gmake install	 [install target in the XOP bin directory]
+#	gmake clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := $(shell ../xop_uname)
+
+#CPP = cpp
+#vpath %.f ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for sun5 
+#
+ifeq ($(ARCH),sun5)
+#FC = gfortran
+#FFLAGS = -O -m64
+#LDFLAGS = -static-libgfortran -static-libgcc
+
+FC = f77
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -Bstatic
+LDFLAGS = -lV77
+endif
+#
+# flags for linux 
+#
+ifeq ($(ARCH),linux)
+FC = gfortran
+FFLAGS = -O -m64
+#FFLAGS = -O -m64 -fno-automatic # may be used to save local variables
+FFLAGSD = -DDEBUG1 -g -m64
+#FFLAGSD = -DDEBUG1 -gdwarf-2 -m64
+#FFLAGSD = -DDEBUG1 -O1 -g -m64 -Wall
+#FFLAGS = -O -m32 $(param1)
+LDFLAGS = -static-libgfortran -static-libgcc
+
+#FC = ifort
+#FFLAGS = -O -m64
+#FFLAGS = -O -m64 -list #-warn declarations
+#FFLAGSD = -DDEBUG1 -g -m64
+#LDFLAGS = -static-libgcc
+#LDFLAGS =
+endif
+#
+# flags for sgi (lindsga) 
+#
+ifeq ($(ARCH),irix)
+FC = f77
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+#LDFLAGS =
+endif
+#
+# flags for darwin
+#
+ifeq ($(ARCH),darwin)
+FC = gfortran
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgfortran -static-libgcc
+endif
+#**************************************************************
+# Sources and Targets
+#src = xcom.f
+
+src1 = xcom.f
+target1s = xcom
+target1d = xcomd
+target1s := $(ARCH)/$(target1s)
+target1d := $(ARCH)/$(target1d)
+object1s = $(patsubst %.f,$(ARCH)/%.o,$(src1)) 
+object1d = $(patsubst %.f,$(ARCH)/%.do,$(src1)) 
+
+# Rules
+.PHONY: all alld xcom
+
+xcom: | $(target1s)
+xcomd: | $(target1d)
+
+all:  | $(target1s)
+alld: | $(target1d)
+#**************************************************************
+
+$(target1s): $(object1s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(target1d): $(object1d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+# Pattern Rules
+$(ARCH)/%.o : %.f
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.F
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.F
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(object1s) : | $(ARCH)
+$(object1d) : | $(ARCH)
+
+$(ARCH):
+	@mkdir -p $@
+
+# Installation in XOP bin directory
+install:
+	/bin/cp -pi $(target1s) ../../bin.$(target1s)
+
+#  Clean up
+clean:
+	$(RM) $(target1s) $(target1d) $(object1s) $(object1d)
+	$(RM) core *~ *.trace

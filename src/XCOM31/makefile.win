@@ -1,0 +1,85 @@
+# --------------------------------------------------------------
+#
+#	gmake -f makefile all
+#	gmake -f makefile install	 [install target in the XOP bin directory]
+#	gmake -f makefile clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := x86
+
+#CPP = cpp
+#vpath %.f ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for windows 64-bit targets
+#
+FC = gfortran
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64 -cpp
+LDFLAGS = -static-libgfortran -static-libgcc
+#
+#**************************************************************
+# Sources and Targets
+#src = xcom.f
+
+src1 = xcom.f
+target1s = xcom.exe
+target1d = xcomd.exe
+target1s := $(ARCH)/$(target1s)
+target1d := $(ARCH)/$(target1d)
+object1s = $(patsubst %.f,$(ARCH)/%.o,$(src1)) 
+object1d = $(patsubst %.f,$(ARCH)/%.do,$(src1)) 
+
+# Rules
+.PHONY: all alld xcom
+
+xcom: | $(target1s)
+xcomd: | $(target1d)
+
+all:  | $(target1s)
+alld: | $(target1d)
+#**************************************************************
+
+$(target1s): $(object1s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(target1d): $(object1d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+# Pattern Rules
+$(ARCH)/%.o : %.f
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.F
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.F
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(object1s) : | $(ARCH)
+$(object1d) : | $(ARCH)
+
+$(ARCH):
+#gnuWin32 mkdir does not recoginize options (bug)
+#	@mkdir -p $@
+	@mkdir $@
+
+# Installation in XOP bin directory
+install:
+	cp -pi $(target1s) ../../bin.$(target1s)
+
+#  Clean up
+clean:
+	$(RM) $(target1s) $(target1d) $(object1s) $(object1d)
+	$(RM) core *~ *.trace

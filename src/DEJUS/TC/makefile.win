@@ -1,0 +1,95 @@
+# --------------------------------------------------------------
+#
+#	gmake -f makefile.win		[make default target] 
+#	gmake -f makefile.win install	[install target in the XOP bin directory]
+#	gmake -f makefile.win clean	[clean the target directory]
+#	RJD, ANL, November 2, 2013
+#
+#	Updated for Fortran 90 routines and updated compiler flags.
+#	RJD, ANL, November 25, 2014
+#	Use the "-static" flag to prevent linking with shared libraries including libmathquad-0.dll.
+#	RJD, ANL, November 28, 2014
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := x86
+
+#CPP = cpp
+#vpath %.f ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for windows 64-bit targets
+#
+FC = gfortran
+FFLAGS = -O -m64 -ffixed-line-length-none # -fdefault-double-8 -fdefault-real-8
+FFLAGSD = -DDEBUG1 -g -m64 -ffixed-line-length-none -fbounds-check
+INCLUDES = -I$(ARCH) -J$(ARCH)
+#LDFLAGS = -static-libgfortran -static-libgcc
+LDFLAGS = -static # use for static linking
+#
+#**************************************************************
+# Sources and Targets
+src = tc.f brighte.f hunt.f usb.f
+targets = tc.exe
+targetd = tcd.exe
+
+targets := $(ARCH)/$(targets)
+targetd := $(ARCH)/$(targetd)
+objects = $(patsubst %.f,$(ARCH)/%.o,$(src)) 
+objectd = $(patsubst %.f,$(ARCH)/%.do,$(src)) 
+
+# Rules
+.PHONY: tc tcd
+#all: tc tcd
+
+tc: | $(targets)
+tcd: | $(targetd)
+#**************************************************************
+
+$(targets): $(objects)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(targetd): $(objectd)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+# Pattern Rules
+$(ARCH)/%.o : %.f
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.f90
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.F
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f90
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(objects): | $(ARCH)
+$(objectd): | $(ARCH)
+
+$(ARCH):
+# gnuWin32 mkdir does not recoginize options (bug)
+#	@mkdir -p $@
+	@mkdir $@
+
+# Installation in XOP bin directory
+install:
+#	/bin/cp -i $(targets) ../../../bin.$(targets)
+	cp -pi $(targets) ..\..\..\bin.$(targets)
+
+#  Clean up
+clean:
+# gnuWin32 rm gives an error for *.trace
+# 	$(RM) $(targets) $(targetd) $(objects) $(objectd) core *~ *.trace
+	$(RM) $(targets) $(targetd) $(objects) $(objectd) core *~ *.trace *.mod $(ARCH)/*.mod

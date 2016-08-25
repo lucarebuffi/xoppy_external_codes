@@ -1,0 +1,78 @@
+# --------------------------------------------------------------
+#
+#	gmake -f makefile.win all
+#	gmake -f makefile.win install	 [install target in the XOP bin directory]
+#	gmake -f makefile.win clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := x86
+
+#CPP = cpp
+#vpath %.c ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for windows 64-bit targets
+#
+CC = gcc
+CFLAGS = -O -m64
+CFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgcc
+#
+#**************************************************************
+# Sources and Targets
+src = xtubes.c mamspec.c
+
+targets = xtubes.exe
+targetd = xtubesd.exe
+targets := $(ARCH)/$(targets)
+targetd := $(ARCH)/$(targetd)
+objects = $(patsubst %.c,$(ARCH)/%.o,$(src)) 
+objectd = $(patsubst %.c,$(ARCH)/%.do,$(src)) 
+
+# Rules
+.PHONY: all alld xtubes
+
+xtubes: | $(targets)
+xtubesd: | $(targetd)
+
+all:  | $(targets)
+alld: | $(targetd)
+#**************************************************************
+
+$(targets): $(objects)
+#	@echo $^ 
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(targetd): $(objectd)
+	$(CC) $(CFLAGSD) $^ -o $@ $(LDFLAGS)
+
+# Pattern Rules
+$(ARCH)/%.o : %.c
+#	@echo $< 
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.c
+	$(CC) -c $(CFLAGSD) $(INCLUDES) $< -o $@
+
+$(objects) : | $(ARCH)
+$(objectd) : | $(ARCH)
+
+$(ARCH):
+#gnuWin32 mkdir does not recoginize options (bug)
+#	@mkdir -p $@
+	@mkdir $@
+
+# Installation in XOP bin directory
+install:
+	cp -pi $(targets) ../../bin.$(targets)
+
+#  Clean up
+clean:
+	$(RM) $(targets) $(targetd) $(objects) $(objectd)
+	$(RM) core *~ *.trace

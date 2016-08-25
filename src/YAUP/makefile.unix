@@ -1,0 +1,199 @@
+# --------------------------------------------------------------
+#
+#	gmake all
+#	gmake install	 [install target in the XOP bin directory]
+#	gmake clean	 [clean the source directory]
+#	RJD, ANL, November 15, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := $(shell ../xop_uname)
+
+#CPP = cpp
+#vpath %.f ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for sun5 
+#
+ifeq ($(ARCH),sun5)
+#FC = gfortran
+#FFLAGS = -O -m64
+#LDFLAGS = -static-libgfortran -static-libgcc
+
+FC = f77
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -Bstatic
+#LDFLAGS = -lV77
+endif
+#
+# flags for linux 
+#
+ifeq ($(ARCH),linux)
+FC = gfortran
+FFLAGS = -O -m64
+#FFLAGS = -O -m64 -fno-automatic # may be used to save local variables
+FFLAGSD = -DDEBUG1 -g -m64
+#FFLAGSD = -DDEBUG1 -gdwarf-2 -m64
+#FFLAGSD = -DDEBUG1 -O1 -g -m64 -Wall
+#FFLAGS = -O -m32 $(param1)
+LDFLAGS = -static-libgfortran -static-libgcc
+
+#FC = ifort
+#FFLAGS = -O -m64
+##FFLAGS = -O -m64 -list #-warn declarations
+#FFLAGSD = -DDEBUG1 -g -m64
+#LDFLAGS = -static-libgcc
+##LDFLAGS =
+endif
+#
+# flags for sgi (lindsga) 
+#
+ifeq ($(ARCH),irix)
+FC = f77
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+#LDFLAGS =
+endif
+#
+# flags for darwin
+#
+ifeq ($(ARCH),darwin)
+FC = gfortran
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgfortran -static-libgcc
+endif
+#**************************************************************
+# Sources and Targets
+#src = yaup.f bfield.f bfield2.f txt2u.f u2txt.f
+
+src1 = yaup.f
+target1s = yaup
+target1d = yaupd
+target1s := $(ARCH)/$(target1s)
+target1d := $(ARCH)/$(target1d)
+object1s = $(patsubst %.f,$(ARCH)/%.o,$(src1)) 
+object1d = $(patsubst %.f,$(ARCH)/%.do,$(src1)) 
+
+src2 = bfield.f
+target2s = bfield
+target2d = bfieldd
+target2s := $(ARCH)/$(target2s)
+target2d := $(ARCH)/$(target2d)
+object2s = $(patsubst %.f,$(ARCH)/%.o,$(src2)) 
+object2d = $(patsubst %.f,$(ARCH)/%.do,$(src2)) 
+
+src3 = bfield2.f
+target3s = bfield2
+target3d = bfield2d
+target3s := $(ARCH)/$(target3s)
+target3d := $(ARCH)/$(target3d)
+object3s = $(patsubst %.f,$(ARCH)/%.o,$(src3)) 
+object3d = $(patsubst %.f,$(ARCH)/%.do,$(src3)) 
+
+src4 = txt2u.f
+target4s = txt2u
+target4d = txt2ud
+target4s := $(ARCH)/$(target4s)
+target4d := $(ARCH)/$(target4d)
+object4s = $(patsubst %.f,$(ARCH)/%.o,$(src4)) 
+object4d = $(patsubst %.f,$(ARCH)/%.do,$(src4)) 
+
+src5 = u2txt.f
+target5s = u2txt
+target5d = u2txtd
+target5s := $(ARCH)/$(target5s)
+target5d := $(ARCH)/$(target5d)
+object5s = $(patsubst %.f,$(ARCH)/%.o,$(src5)) 
+object5d = $(patsubst %.f,$(ARCH)/%.do,$(src5)) 
+
+# Rules
+.PHONY: all alld yaup bfield bfield2 txt2u u2txt
+
+yaup:    | $(target1s)
+bfield:  | $(target2s)
+bfield2: | $(target3s)
+txt2u:   | $(target4s)
+u2txt:   | $(target5s)
+
+yaupd:    | $(target1d)
+bfieldd:  | $(target2d)
+bfield2d: | $(target3d)
+txt2ud:   | $(target4d)
+u2txtd:   | $(target5d)
+
+all:  | $(target1s) $(target2s) $(target3s) $(target4s) $(target5s)
+alld: | $(target1d) $(target2d) $(target3d) $(target4d) $(target5d)
+#**************************************************************
+
+$(target1s): $(object1s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+$(target1d): $(object1d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+$(target2s): $(object2s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+$(target2d): $(object2d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+$(target3s): $(object3s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+$(target3d): $(object3d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+$(target4s): $(object4s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+$(target4d): $(object4d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+$(target5s): $(object5s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+$(target5d): $(object5d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+
+# Pattern Rules
+$(ARCH)/%.o : %.f
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.o : %.F
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.F
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(object1s) $(object2s) $(object3s) $(object4s) $(object5s): | $(ARCH)
+$(object1d) $(object2d) $(object3d) $(object4d) $(object5d): | $(ARCH)
+
+$(ARCH):
+	@mkdir -p $@
+
+# Installation in XOP bin directory
+install:
+	/bin/cp -pi $(target1s) ../../bin.$(target1s)
+	/bin/cp -pi $(target2s) ../../bin.$(target2s)
+	/bin/cp -pi $(target3s) ../../bin.$(target3s)
+	/bin/cp -pi $(target4s) ../../bin.$(target4s)
+	/bin/cp -pi $(target5s) ../../bin.$(target5s)
+
+#  Clean up
+clean:
+	$(RM) $(target1s) $(target1d) $(object1s) $(object1d)
+	$(RM) $(target2s) $(target2d) $(object2s) $(object2d)
+	$(RM) $(target3s) $(target3d) $(object3s) $(object3d)
+	$(RM) $(target4s) $(target4d) $(object4s) $(object4d)
+	$(RM) $(target5s) $(target5d) $(object5s) $(object5d)
+	$(RM) core *~ *.trace

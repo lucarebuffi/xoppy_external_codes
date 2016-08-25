@@ -1,0 +1,82 @@
+# --------------------------------------------------------------
+#
+#	gmake -f makefile.win all
+#	gmake -f makefile.win install	 [install target in the XOP bin directory]
+#	gmake -f makefile.win clean	 [clean the source directory]
+#	RJD, ANL, December 3, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH := x86
+
+#CPP = cpp
+#vpath %.f ../
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for windows 64-bit targets
+#
+FC = gfortran
+FFLAGS = -O -m64
+#FFLAGS = -O -m64 -fno-automatic # may be used to save local variables
+FFLAGSD = -DDEBUG1 -g -m64
+INCLUDES = -I$(ARCH)/LibC
+LDFLAGS = -static-libgfortran -static-libgcc -L$(ARCH)/LibC -lcrysfml
+#
+#**************************************************************
+# Sources and Targets
+#src = xpowder_fml.f90
+
+src1 = xpowder_fml.f90
+target1s = xpowder_fml.exe
+target1d = xpowder_fmld.exe
+target1s := $(ARCH)/$(target1s)
+target1d := $(ARCH)/$(target1d)
+object1s = $(patsubst %.f90,$(ARCH)/%.o,$(src1)) 
+object1d = $(patsubst %.f90,$(ARCH)/%.do,$(src1)) 
+
+# Rules
+.PHONY: all alld xpowder_fml
+
+xpowder_fml: | $(target1s)
+xpowder_fmld: | $(target1d)
+
+all:  | $(target1s)
+alld: | $(target1d)
+#**************************************************************
+
+$(target1s): $(object1s)
+#	@echo $^ 
+	$(FC) $(FFLAGS) $^ -o $@ $(LDFLAGS)
+	mv *.mod $(ARCH)
+
+$(target1d): $(object1d)
+	$(FC) $(FFLAGSD) $^ -o $@ $(LDFLAGS)
+	mv *.mod $(ARCH)
+
+# Pattern Rules
+$(ARCH)/%.o : %.f90
+#	@echo $< 
+	$(FC) -c $(FFLAGS) $(INCLUDES) $< -o $@
+
+$(ARCH)/%.do : %.f90
+	$(FC) -c $(FFLAGSD) $(INCLUDES) $< -o $@
+
+$(object1s) : | $(ARCH)
+$(object1d) : | $(ARCH)
+
+$(ARCH):
+#gnuWin32 mkdir does not recoginize options (bug)
+#	@mkdir -p $@
+	@mkdir -p $@
+
+# Installation in XOP bin directory
+install:
+	cp -pi $(target1s) ../../bin.$(target1s)
+
+#  Clean up
+clean:
+	$(RM) $(target1s) $(target1d) $(object1s) $(object1d) core *~ *.trace *.mod $(ARCH)/*.mod

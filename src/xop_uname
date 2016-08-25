@@ -1,0 +1,49 @@
+#!/bin/sh
+# HOSTTYPE is the variable containing the hosts architecture
+
+osname=`uname -s`
+osversion=`uname -r`
+
+HOSTTYPE=unknown
+case $osname in
+   SunOS)
+      HOSTTYPE=sun`uname -r | nawk -F"." '{print $1}'`
+      ;;
+   HP-UX)
+      sysname=`/bin/uname -m`
+      hpuxver=`echo $osversion | cut -f 2 -d "."`
+#      if [ $hpuxver -lt 10 ]; then
+#        echo "Invalid version of $osname"
+#        exit 1
+#      fi
+      case $sysname in
+        9000/8*)
+#          HOSTTYPE=hp800
+          HOSTTYPE=hp
+          ;;
+        9000/7*)
+#          HOSTTYPE=hp700
+          HOSTTYPE=hp
+          ;;
+      esac
+      ;;
+   OSF1)
+      decosf1ver=`echo $osversion | cut -f 1 -d "." | cut -b 2`
+      if [ $decosf1ver -lt 4 ]; then
+        echo "Invalid version of $osname"
+        exit 1
+      fi
+      HOSTTYPE=alpha
+      ;;
+   Linux)
+      HOSTTYPE=linux
+      ;;
+   Darwin)
+      HOSTTYPE=darwin
+      ;;
+   IRIX*)
+      HOSTTYPE=irix
+      ;;
+esac
+echo $HOSTTYPE
+

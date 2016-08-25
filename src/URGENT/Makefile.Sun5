@@ -1,0 +1,11 @@
+FC = g77
+FFLAGS =  
+
+all: 
+	$(FC) $(FFLAGS) -o urgent urgent.f
+
+clean: 
+	/bin/rm -f *.trace *.o urgent
+
+install:
+	cp urgent ./../../bin.sun5/urgent
