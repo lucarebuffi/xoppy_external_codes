@@ -546,10 +546,10 @@ C     2 Apr 87. Reads various input parameters.
       CHARACTER*72 FORMLA,FRM(100),SUBST
 Csrio      CHARACTER*30 ENGIN,SOURCE
       CHARACTER*30 ENGIN
-      CHARACTER*120 SOURCE
+      CHARACTER*1020 SOURCE
       CHARACTER  RESP*1                                                 SMS
 C added by srio@esrf.eu
-        character*90 datadir
+        character*900 datadir
       PARAMETER (MEA=1200)                                              SMS
       DIMENSION JZ(100),WT(100),JZ1(100),WT1(100),LH(100),WATE(100),
      1 FRAC(100),EADD(MEA)
