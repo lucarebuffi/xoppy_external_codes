@@ -1514,7 +1514,8 @@ c check if a file exists and quit if it does not exist
 	inquire(file=input, exist=file_exists)
 
 	if (file_exists .neqv. .true.) then
-	  print 200, '&check_file-F-NOFILE, File not found ... ',trim(input)
+	  print 200, '&check_file-F-NOFILE, File not found ... '
+	  print 200, trim(input)
 	call exit(0)
 	endif
 

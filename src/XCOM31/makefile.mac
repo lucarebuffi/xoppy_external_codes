@@ -1,0 +1,26 @@
+# --------------------------------------------------------------
+#
+#	gmake all
+#	gmake install	 [install target in the XOP bin directory]
+#	gmake clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH = darwin
+
+#
+# flags for darwin
+#
+FC = gfortran-6
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgfortran -static-libgcc
+
+all:
+	$(FC) $(FFLAGS) -o xcom  xcom.f
+clean:
+	rm -f *.o xcom

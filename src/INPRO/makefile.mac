@@ -1,0 +1,27 @@
+# --------------------------------------------------------------
+#
+#	gmake 
+#	gmake install	 [install target in the XOP bin directory]
+#	gmake clean	 [clean the source directory]
+#	RJD, ANL, November 7, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH = darwin
+
+#
+# flags for darwin
+#
+FC = gfortran
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgfortran -static-libgcc
+
+all:
+	$(FC) $(FFLEGS)  -o inpro inpro.f atomfacm.f debyenewm.f fresnelmk.f iblank.f iblank2.f matparmo.f parametermo.f perfect_crystalmo.f strufacnewm.f
+
+clean:
+	rm -f *.o inpro

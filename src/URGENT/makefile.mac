@@ -1,0 +1,26 @@
+# --------------------------------------------------------------
+#
+#	gmake all
+#	gmake install	 [install target in the XOP bin directory]
+#	gmake clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+
+#************** PLATFORM DEPENDENT VARIABLES **************
+#
+# flags for darwin
+#
+ARCH = darwin
+FC = gfortran
+FFLAGS = -O -m64
+FFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgfortran -static-libgcc
+#**************************************************************
+
+all:  
+	$(FC) -o urgent urgent.f
+
+clean:
+	rm *.o urgent

@@ -1,0 +1,27 @@
+# --------------------------------------------------------------
+#
+#	gmake all
+#	gmake install	 [install target in the XOP bin directory]
+#	gmake clean	 [clean the source directory]
+#	RJD, ANL, November 21, 2013
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH = darwin
+
+#
+# flags for darwin
+#
+CC = gcc
+CFLAGS = -O -m64
+CFLAGSD = -DDEBUG1 -g -m64
+LDFLAGS = -static-libgcc -lm
+
+all:
+	$(CC) $(CFLAGS) -o xtubes xtubes.c mamspec.c
+
+clean:
+	rm -f *.o xtubes

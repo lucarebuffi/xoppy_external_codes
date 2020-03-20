@@ -1,0 +1,28 @@
+# --------------------------------------------------------------
+#
+#	gmake		[make default target]
+#	gmake install	[install target in the XOP bin directory]
+#	gmake clean	[clean the target directory]
+#	RJD, ANL, November 2, 2013
+#
+#	Updated for Fortran 90 routines and updated compiler flags.
+#	RJD, ANL, November 25, 2014
+#
+#
+# --------------------------------------------------------------
+#
+# System definition (architecture)
+#
+ARCH = darwin
+
+FC = gfortran
+FFLAGS = -O -m64 -ffree-line-length-none
+FFLAGSD = -DDEBUG1 -g -m64 -ffree-line-length-none -fbounds-check
+INCLUDES = -I$(ARCH) -J$(ARCH)
+LDFLAGS = -static-libgfortran -static-libgcc
+
+all:
+	$(FC) $(FFLAGS) -o us precision_standard.f90 gauss_convol.f90 linint.f90 econ.f90 resize.f90 us_data_modules.f90 us.f90 brighte.f90 hunt.f90
+
+clean:
+	rm -f *.mod *.o us
