@@ -15,12 +15,14 @@ ARCH = darwin
 #
 # flags for darwin
 #
-FC = gfortran-6
-FFLAGS = -O -m64
+FC = gfortran
+FFLAGS = 
 FFLAGSD = -DDEBUG1 -g -m64
-LDFLAGS = -static-libgfortran -static-libgcc
+#LDFLAGS = -static-libgfortran -static-libgcc
 
+LDFLAGS =   -static-libgfortran -lgfortran -mmacosx-version-min=10.13
+#-lgcc -lSystem -nodefaultlibs -mmacosx-version-min=10.12 -fbacktrace -Wall -Wextra -pedantic -std=f2008 -Wno-unused-parameter -Wno-maybe-uninitialized 
 all:
-	$(FC) $(FFLAGS) -o xcom  xcom.f
+	$(FC) $(LDFLAGS)  $(FFLAGS) -o xcom  xcom.f
 clean:
 	rm -f *.o xcom

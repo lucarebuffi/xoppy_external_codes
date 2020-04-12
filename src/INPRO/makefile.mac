@@ -16,12 +16,14 @@ ARCH = darwin
 # flags for darwin
 #
 FC = gfortran
-FFLAGS = -O -m64
+FFLAGS = 
 FFLAGSD = -DDEBUG1 -g -m64
-LDFLAGS = -static-libgfortran -static-libgcc
+#LDFLAGS = -static-libgfortran -static-libgcc
+LDFLAGS =   -static-libgfortran -lgfortran -mmacosx-version-min=10.13
+#-lgcc -lSystem -nodefaultlibs -mmacosx-version-min=10.12 -fbacktrace -Wall -Wextra -pedantic -std=f2008 -Wno-unused-parameter -Wno-maybe-uninitialized 
 
 all:
-	$(FC) $(FFLEGS)  -o inpro inpro.f atomfacm.f debyenewm.f fresnelmk.f iblank.f iblank2.f matparmo.f parametermo.f perfect_crystalmo.f strufacnewm.f
+	$(FC)  $(LDFLAGS) $(FFLAGS)  -o inpro inpro.f atomfacm.f debyenewm.f fresnelmk.f iblank.f iblank2.f matparmo.f parametermo.f perfect_crystalmo.f strufacnewm.f
 
 clean:
 	rm -f *.o inpro
