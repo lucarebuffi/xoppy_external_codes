@@ -380,7 +380,7 @@
                 ' A,'/1X,'sigmx = ',F6.4,' mm,',2X,'sigy = ',F6.4,' mm,',2X, &
             'sigx1 = ',F6.4,' mrad,',2X,'sigy1 = ',F6.4,' mrad')
 1300	format(/' Acceptance : d = ',F8.3,' m,',2X,'XSize = ',F7.3,' mm,',&
-               2X,'YSize = ',F7.3,' mm,',2X,/1X'nxp = 'I2',',2X,'nyp = ',I2)
+               2X,'YSize = ',F7.3,' mm,',2X,/1X'nxp = 'I4',',2X,'nyp = ',I4)
 1400	format(/' iharm = ',I5,',',1X,'nSig = ',I3)
 1500    format(1X,'nPhi = ',I3,1X,'nSig = ',I3,1X,'nAlpha = ',I3,1X,&
               'dAlpha = ',F4.1,1X,'nOmega = ',I4,1X,'dOmega = ',F4.1)
@@ -438,7 +438,7 @@
 !	      = 2 - ZERO EMITTANCE
 !	
 	write(6,*) "*****************************************************"
-	write(6,*) "   Igor will resume after this ends, please wait."
+	write(6,*) "  Interface will resume after this ends, please wait."
 	write(6,*) "*****************************************************"
 	write(6,*) " "
 	write(6,*) "Calculating harmonic #:"
@@ -714,9 +714,8 @@
 	  ctheta = cos(anM(j)* toDeg)
 	  sTheta2 = stheta*stheta
 	  sttheta = stheta2/ctheta
-	  print*,">>>>>>>>>>>>>>>>>>>>>> opening file ",root_D
-	  print*,">>>>>>>>>>>>>>>>>>>>>> directory **"//root(1:iblank(root_D))//"**"
-	  print*,">>>>>>>>>>>>>>>>>>>>>> file ",com(j)
+	  print*,">> o.e. number: ",j," reflectivity file ",root_D(1:iblank(root_D))
+
 	  OPEN (20,FILE=root_D,STATUS='OLD')
 	    do I=1,maxPoOC
 	      READ (20,*,end=300) eRef(j,I), n, k
