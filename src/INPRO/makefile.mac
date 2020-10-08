@@ -23,7 +23,17 @@ LDFLAGS =   -static-libgfortran -lgfortran -mmacosx-version-min=10.13
 #-lgcc -lSystem -nodefaultlibs -mmacosx-version-min=10.12 -fbacktrace -Wall -Wextra -pedantic -std=f2008 -Wno-unused-parameter -Wno-maybe-uninitialized 
 
 all:
-	$(FC)  $(LDFLAGS) $(FFLAGS)  -o inpro inpro.f atomfacm.f debyenewm.f fresnelmk.f iblank.f iblank2.f matparmo.f parametermo.f perfect_crystalmo.f strufacnewm.f
+	$(FC) $(FFLAGS)  -c inpro.f 
+	$(FC) $(FFLAGS)  -c atomfacm.f 
+	$(FC) $(FFLAGS)  -c debyenewm.f 
+	$(FC) $(FFLAGS)  -c fresnelmk.f
+	$(FC) $(FFLAGS)  -c iblank.f
+	$(FC) $(FFLAGS)  -c iblank2.f 
+	$(FC) $(FFLAGS)  -c matparmo.f 
+	$(FC) $(FFLAGS)  -c parametermo.f 
+	$(FC) $(FFLAGS)  -c perfect_crystalmo.f 
+	$(FC) $(FFLAGS)  -c strufacnewm.f
+	ld -o inpro -no_compact_unwind -arch x86_64 -macosx_version_min 10.13.0 -lSystem /usr/local/gfortran/lib/libgfortran.a /usr/local/gfortran/lib/libquadmath.a /usr/local/gfortran/lib/gcc/x86_64-apple-darwin16/6.3.0/libgcc.a *.o
 
 clean:
 	rm -f *.o inpro

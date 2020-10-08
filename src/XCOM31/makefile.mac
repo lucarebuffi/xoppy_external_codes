@@ -23,7 +23,7 @@ FFLAGSD = -DDEBUG1 -g -m64
 LDFLAGS =   -static-libgfortran -lgfortran -mmacosx-version-min=10.13
 all:
 	$(FC) $(FFLAGS) -c *.f
-	ld -o xcom  -no_compact_unwind -arch x86_64 -macosx_version_min 10.13.0 -lSystem /usr/local/gfortran/lib/libgfortran.a /usr/local/gfortran/lib/libquadmath.a /usr/local/gfortran/lib/gcc/x86_64-apple-darwin16/6.3.0/libgcc.a *.o
+	ld -o xcom -no_compact_unwind -arch x86_64 -macosx_version_min 10.13.0 -lSystem /usr/local/gfortran/lib/libgfortran.a /usr/local/gfortran/lib/libquadmath.a /usr/local/gfortran/lib/gcc/x86_64-apple-darwin16/6.3.0/libgcc.a *.o
 
 clean:
 	rm -f *.o xcom

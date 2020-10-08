@@ -20,7 +20,8 @@ LDFLAGS = -static-libgfortran -static-libgcc
 #**************************************************************
 
 all:  
-	$(FC) -o urgent urgent.f
+	$(FC) -c urgent.f
+	ld -o urgent -no_compact_unwind -arch x86_64 -macosx_version_min 10.13.0 -lSystem /usr/local/gfortran/lib/libgfortran.a /usr/local/gfortran/lib/libquadmath.a /usr/local/gfortran/lib/gcc/x86_64-apple-darwin16/6.3.0/libgcc.a urgent.o
 
 clean:
 	rm *.o urgent
