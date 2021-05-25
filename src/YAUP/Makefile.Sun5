@@ -1,0 +1,19 @@
+FC = g77
+FFLAGS =  
+
+all: 
+	$(FC) $(FFLAGS) -o bfield BFIELD.F
+	$(FC) $(FFLAGS) -o bfield2 BFIELD2.F
+	$(FC) $(FFLAGS) -o txt2u TXT2U.F
+	$(FC) $(FFLAGS) -o u2txt U2TXT.F
+	$(FC) $(FFLAGS) -o yaup YAUP.F
+
+clean: 
+	/bin/rm -f *.trace *.o bfield bfield2 txt2u u2txt yaup
+
+install:
+	cp bfield ./../../bin.sun5/bfield
+	cp bfield2 ./../../bin.sun5/bfield2
+	cp txt2u ./../../bin.sun5/txt2u
+	cp u2txt ./../../bin.sun5/u2txt
+	cp yaup ./../../bin.sun5/yaup

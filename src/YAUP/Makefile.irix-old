@@ -1,0 +1,19 @@
+FC = f77
+FFLAGS =  
+ARCH=irix
+all: 
+	$(FC) $(FFLAGS) -o bfield BFIELD.F
+	$(FC) $(FFLAGS) -o bfield2 BFIELD2.F
+	$(FC) $(FFLAGS) -o txt2u TXT2U.F
+	$(FC) $(FFLAGS) -o u2txt U2TXT.F
+	$(FC) $(FFLAGS) -o yaup YAUP.F
+
+clean: 
+	/bin/rm -f *.o bfield bfield2 txt2u u2txt yaup
+
+install:
+	cp bfield ./../../bin.$(ARCH)/bfield
+	cp bfield2 ./../../bin.$(ARCH)/bfield2
+	cp txt2u ./../../bin.$(ARCH)/txt2u
+	cp u2txt ./../../bin.$(ARCH)/u2txt
+	cp yaup ./../../bin.$(ARCH)/yaup

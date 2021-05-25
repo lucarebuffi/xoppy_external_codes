@@ -1,0 +1,31 @@
+# --------------------------------------------------------------
+#
+# gnu makefile for 
+#
+# Usage:
+#	make            [to create the executable crystal_ml]
+#	make install	 [to install  it in the correct directory]
+#	make clean	 [to clean the source directory]
+#
+#
+# --------------------------------------------------------------
+#
+FC = g77
+FFLAGS =  -O
+
+all: 
+	$(FC) $(FFLAGS) -o bfield BFIELD.F
+	$(FC) $(FFLAGS) -o bfield2 BFIELD2.F
+	$(FC) $(FFLAGS) -o txt2u TXT2U.F
+	$(FC) $(FFLAGS) -o u2txt U2TXT.F
+	$(FC) $(FFLAGS) -o yaup YAUP.F
+
+clean: 
+	del *.trace *.o bfield.exe bfield2.exe txt2u.exe u2txt.exe yaup.exe
+
+install:
+	copy bfield.exe .\..\..\bin.x86\bfield.exe
+	copy bfield2.exe .\..\..\bin.x86\bfield2.exe
+	copy txt2u.exe .\..\..\bin.x86\txt2u.exe
+	copy u2txt.exe .\..\..\bin.x86\u2txt.exe
+	copy yaup.exe .\..\..\bin.x86\yaup.exe

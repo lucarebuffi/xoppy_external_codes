@@ -1,0 +1,28 @@
+all: bfield bfield2 txt2u u2txt yaup
+
+bfield: 
+	lf90  bfield.f
+
+bfield2: 
+	lf90  bfield2.f
+
+txt2u: 
+	lf90  txt2u.f
+
+u2txt: 
+	lf90  u2txt.f
+
+yaup: 
+	lf90  yaup.f
+
+install: 
+	copy bfield.exe c:\xop\win32.bin\bfield.exe
+	copy bfield2.exe c:\xop\win32.bin\bfield2.exe
+	copy txt2u.exe c:\xop\win32.bin\txt2u.exe
+	copy u2txt.exe c:\xop\win32.bin\u2txt.exe
+	copy yaup.exe c:\xop\win32.bin\yaup.exe
+
+clean:
+	del *.exe
+	del *.obj
+	del *.map
