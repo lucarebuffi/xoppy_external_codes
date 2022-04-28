@@ -42,7 +42,7 @@ FC = gfortran
 FFLAGS = -O -m64
 FFLAGSD = -DDEBUG1 -g -m64
 #LDFLAGS = -heap-arrays -static-libgcc
-LDFLAGS = -static-libgcc
+LDFLAGS = -static-libgfortran -static-libgcc
 #LDFLAGS =
 endif
 #
@@ -76,7 +76,7 @@ objectd = $(patsubst %.f,$(ARCH)/%.do,$(src))
 
 # Rules
 .PHONY: inpro inprod
-#all: inpro inprod
+all: inpro
 
 inpro: | $(targets)
 inprod: | $(targetd)
@@ -108,7 +108,7 @@ $(ARCH):
 
 # Installation in XOP bin directory
 install:
-	/bin/cp -pi $(targets) ../../bin.$(targets)
+	/bin/cp -pi $(targets) ../../bin/$(targets)
 
 #  Clean up
 clean:
