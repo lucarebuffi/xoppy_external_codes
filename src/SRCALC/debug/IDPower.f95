@@ -568,8 +568,10 @@
     write(3,*) yps
     write(3,*) nMir
     print*,">>>Starting to write data block..."
+        call flush()
 	do 75 IB=1,nxp
            print*,">>>> line",IB," out of ",nxp
+                call flush()
 		do 75 IC=1,nyp
                        print*,"      col",IC," out of ",nyp
 			write(3,2300)(PD(ii,IB,IC),ii=0,nMir)
