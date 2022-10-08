@@ -393,6 +393,7 @@
 9000	format(//' *** INVALID INPUT parameters ***')
 	Close (2)
 	Close (3)
+        print*,"...closed file unit 3"
 
 	end
 ! ***************************************************************C
@@ -562,6 +563,7 @@
 	if(iharm.lt.0.and.I.lt.-iharm)goto 20
 74	IMAX=I
 !
+    call flush()
     write(3,*) nxp
     write(3,*) xps
     write(3,*) nyp
@@ -571,12 +573,14 @@
         call flush()
 	do 75 IB=1,nxp
            print*,">>>> line",IB," out of ",nxp
-                call flush()
 		do 75 IC=1,nyp
                        print*,"      col",IC," out of ",nyp
-			write(3,2300)(PD(ii,IB,IC),ii=0,nMir)
+		       write(3,2300)(PD(ii,IB,IC),ii=0,nMir)
+                       call flush()
 75	continue
+    call flush()
     print*,">>>Finished: data block written."
+    close(3)
 !	
 !	PRINT POWER DENSITY and INTEGRATED POWER FOR EACH HARMONIC 
 !	
